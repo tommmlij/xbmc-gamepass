@@ -272,10 +272,9 @@ class pigskin(object):
                 'uuid' : gigya_data['UID'],
                 'signature' : gigya_data['UIDSignature'],
                 'ts' : gigya_data['signatureTimestamp'],
-                'errorCode' : '0',
+                'device_type' : 'web',
                 'username' : username,
-                'password' : password,
-                'grant_type' : 'password'
+                'grant_type' : 'shield_authentication'
             }
 
         try:
@@ -327,13 +326,13 @@ class pigskin(object):
         to determine if access has been granted.
         """
         # if the user already has access, just skip the entire auth process
-        if not force:
-            if self.check_for_subscription():
-                self.logger.debug('No need to login; the user already has access.')
-                return True
+        #if not force:
+        #    if self.check_for_subscription():
+        #        self.logger.debug('No need to login; the user already has access.')
+        #        return True
 
 
-        for auth in [self._gp_auth, self._gigya_auth]:
+        for auth in [self._gigya_auth]:
             self.logger.debug('Trying {0} authentication.'.format(auth.__name__))
             try:
                 data = auth(username, password)
@@ -954,7 +953,7 @@ class pigskin(object):
         }
         for vs in akamai_xml.iter('videoSource'):
             try:
-                vs_format = vs.attrib['format'].lower()
+                vs_format = vs.attrib['name'].lower()
                 vs_url = vs.find('uri').text
             except (KeyError, AttributeError):
                 continue
